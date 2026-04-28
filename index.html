@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My gallery</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+    <!-- Библиотека JSZip для создания архивов на лету -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+</head>
+<body>
+    <header class="header">
+        <h1>My gallery</h1>
+    </header>
+
+    <div class="control-bar">
+        <div class="actions-left">
+            <!-- Скрытый инпут для выбора файлов -->
+            <input type="file" id="image-upload" accept="image/*" multiple style="display: none;">
+            <button class="action-btn" id="upload-btn" title="Добавить свои фотографии"><i class="fa-solid fa-cloud-arrow-up"></i> Добавить фото</button>
+            <button class="action-btn" id="favorites-btn" title="Показать избранные фото">
+                <i class="fa-regular fa-heart"></i>
+                В избранное
+                <span class="fav-count" id="fav-count" style="display:none;">0</span>
+            </button>
+            <button class="action-btn"><i class="fa-solid fa-share-nodes"></i> Поделиться</button>
+        </div>
+        <div class="action-right">
+            <button class="download-btn" id="download-all-btn">
+                <i class="fa-solid fa-download"></i> Скачать весь архив (.zip)
+            </button>
+        </div>
+    </div>
+
+    <!-- Панель избранного (скрыта по умолчанию) -->
+    <div class="favorites-panel" id="favorites-panel">
+        <div class="favorites-panel-header">
+            <span><i class="fa-solid fa-heart"></i> Избранные фотографии</span>
+            <div style="display: flex; gap: 15px; align-items: center;">
+                <button class="action-btn" id="download-fav-btn" style="color: #e05070; padding: 4px 8px; font-size: 0.85rem;">
+                    <i class="fa-solid fa-file-zipper"></i> Скачать избранное (.zip)
+                </button>
+                <button class="close-favorites-btn" id="close-favorites-btn"><i class="fa-solid fa-xmark"></i> Закрыть</button>
+            </div>
+        </div>
+        <div class="favorites-grid" id="favorites-grid">
+            <p class="no-favorites-msg">Вы ещё не добавили фото в избранное.<br>Нажмите ❤️ на любой карточке.</p>
+        </div>
+    </div>
+
+    <div class="photo-grid">
+        <div class="photo-card" data-id="demo-1">
+            <!-- Добавлен атрибут crossorigin="anonymous" для возможности скачивания картинок -->
+            <img src="https://images.unsplash.com/photo-1519167758481-83f550bb49b3?q=80&w=1400&fit=crop" alt="Банкетный зал ракурс 1" crossorigin="anonymous">
+            <div class="overlay-icons">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <i class="fa-regular fa-heart heart-btn" title="В избранное"></i>
+                <!-- Значок скачивания -->
+                <i class="fa-solid fa-download single-download-btn" title="Скачать фото"></i>
+            </div>
+        </div>
+        <div class="photo-card active-card" data-id="demo-2">
+            <img src="https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?q=80&w=1400&fit=crop" alt="Центральная люстра" crossorigin="anonymous">
+            <div class="overlay-icons">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <i class="fa-regular fa-heart heart-btn" title="В избранное"></i>
+                <i class="fa-solid fa-download single-download-btn" title="Скачать фото"></i>
+            </div>
+        </div>
+        <div class="photo-card" data-id="demo-3">
+            <img src="https://images.unsplash.com/photo-1522413452208-99690151c67b?q=80&w=1400&fit=crop" alt="Подготовка к банкету" crossorigin="anonymous">
+            <div class="overlay-icons">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <i class="fa-regular fa-heart heart-btn" title="В избранное"></i>
+                <i class="fa-solid fa-download single-download-btn" title="Скачать фото"></i>
+            </div>
+        </div>
+        
+        <div class="photo-card" data-id="demo-4">
+            <img src="https://images.unsplash.com/photo-1544928147-79a2dbc1f389?q=80&w=1400&fit=crop" alt="Роскошный стол" crossorigin="anonymous">
+            <div class="overlay-icons">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <i class="fa-regular fa-heart heart-btn" title="В избранное"></i>
+                <i class="fa-solid fa-download single-download-btn" title="Скачать фото"></i>
+            </div>
+        </div>
+        <div class="photo-card" data-id="demo-5">
+            <img src="https://images.unsplash.com/photo-1533105079780-92b9be482077?q=80&w=1400&fit=crop" alt="Декорированный стол с цветами" crossorigin="anonymous">
+            <div class="overlay-icons">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <i class="fa-regular fa-heart heart-btn" title="В избранное"></i>
+                <i class="fa-solid fa-download single-download-btn" title="Скачать фото"></i>
+            </div>
+        </div>
+        <div class="photo-card" data-id="demo-6">
+            <img src="https://images.unsplash.com/photo-1511795409834-ef04bbd61622?q=80&w=1400&fit=crop" alt="Общий вид зала" crossorigin="anonymous">
+            <div class="overlay-icons">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <i class="fa-regular fa-heart heart-btn" title="В избранное"></i>
+                <i class="fa-solid fa-download single-download-btn" title="Скачать фото"></i>
+            </div>
+        </div>
+    </div>
+    <!-- ═══════ ЛАЙТБОКС ═══════ -->
+    <div class="lb-overlay" id="lb-overlay">
+
+        <!-- Верхняя панель -->
+        <div class="lb-topbar">
+            <span class="lb-counter" id="lb-counter">1 / 1</span>
+
+            <button class="lb-top-btn lb-download-btn-lb" id="lb-download" title="Скачать">
+                <i class="fa-solid fa-download"></i>
+                <span>Скачать</span>
+            </button>
+
+            <div class="lb-top-actions">
+                <button class="lb-top-btn" id="lb-heart" title="В избранное">
+                    <i class="fa-regular fa-heart"></i>
+                </button>
+                <button class="lb-top-btn" id="lb-share" title="Поделиться">
+                    <i class="fa-solid fa-share"></i>
+                </button>
+                <button class="lb-top-btn" id="lb-zoom" title="Zoom">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </button>
+                <button class="lb-top-btn" id="lb-fullscreen" title="Полный экран">
+                    <i class="fa-solid fa-expand"></i>
+                </button>
+                <button class="lb-top-btn lb-close-btn" id="lb-close" title="Закрыть">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Стрелки навигации -->
+        <button class="lb-arrow lb-prev" id="lb-prev" title="Предыдущее фото">
+            <i class="fa-solid fa-chevron-left"></i>
+        </button>
+        <button class="lb-arrow lb-next" id="lb-next" title="Следующее фото">
+            <i class="fa-solid fa-chevron-right"></i>
+        </button>
+
+        <!-- Контейнер изображения -->
+        <div class="lb-img-wrap" id="lb-img-wrap">
+            <img class="lb-img" id="lb-img" src="" alt="">
+        </div>
+
+        <!-- Нижняя подпись (имя файла) -->
+        <div class="lb-caption" id="lb-caption"></div>
+    </div>
+
+    <!-- Скрипты в конце документа -->
+    <script src="script.js"></script>
+</body>
